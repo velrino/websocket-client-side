@@ -1,0 +1,27 @@
+<ng-template #auth let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Auth</h4>
+    </div>
+    <div class="modal-body text-center">
+        <div class="row justify-content-md-center">
+            <div class="col-lg-6">
+                <form>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                            placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="submit()">Login</button>
+    </div>
+</ng-template>
+
+<!-- <button class="btn btn-lg btn-outline-primary" (click)="open(content)">Launch demo modal</button> -->
