@@ -1,0 +1,3 @@
+<ngb-toast *ngFor="let toast of toastService.toasts" [class]="toast.type" [delay]="toast.delay || 5000" (click)="toastService.remove(toast)" class="clickable">
+    {{ toast.text }}
+</ngb-toast>
