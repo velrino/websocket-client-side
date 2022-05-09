@@ -11,6 +11,7 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent implements OnInit {
   title = 'websocket-client-side';
+  result = 25000000;
   authUser: any;
   public users: number = 0;
   public message: string = '';
