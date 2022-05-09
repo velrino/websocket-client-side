@@ -22,13 +22,17 @@ export class AuthComponent implements OnInit {
         private authService: AuthService,
     ) {
     }
+
     ngOnInit() {
 
     }
 
     ngAfterViewInit() {
+        const authUser = this.authService.getDataUser();
+        
+        if(authUser) return;
+
         this.modalService.open(this.authModal, { centered: true, backdrop: `static` })
-        console.log("dsdsdsd")
     }
 
     async submit() {
