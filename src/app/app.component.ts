@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   result = 25000000;
   authUser: any;
   public users: number = 0;
-  public message: string = '';
+  public message: any = 1;
   public messages: string[] = [];
 
   constructor(
@@ -30,15 +30,15 @@ export class AppComponent implements OnInit {
     this.http.get<any>('http://localhost:3000/api/currency').subscribe(data => {
       console.log(data)
     })
-    this.webSocketService.receiveChat().subscribe((message: any) => {
-      this.messages.push(message);
-    });
-    this.webSocketService.getUsers().subscribe((users: any) => {
-      this.users = users;
-    });
+    // this.webSocketService.receiveChat().subscribe((message: any) => {
+    //   this.messages.push(message);
+    // });
+    // this.webSocketService.getUsers().subscribe((users: any) => {
+    //   this.users = users;
+    // });
   }
 
-  addChat() {
+  start() {
     this.messages.push(this.message);
     this.webSocketService.sendChat(this.message);
     this.message = '';

@@ -15,11 +15,11 @@
         </div>
       </div>
       <div class="form-group">
-        <label for="exampleFormControlInput1">Numero</label>
-        <input type="text" class="form-control" id="exampleFormControlInput1" mask="separator.2" maxlength="8" inputmode="numeric">
+        <label for="bet">Numero</label>
+        <input type="text" class="form-control" id="bet" name="bet" mask="separator.2" maxlength="8" inputmode="numeric" [(ngModel)]="message">
       </div>
       <div class="d-grid gap-2 mt-3">
-        <button class="btn btn-danger" type="button">Começar</button>
+        <button class="btn btn-danger" type="button" (click)="start()">Começar</button>
       </div>
     </div>
     <div class="col-12 col-lg-6">

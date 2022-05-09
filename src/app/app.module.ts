@@ -12,8 +12,6 @@ import { ToastComponent } from './services/toast/toast.component';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,7 +23,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     HttpClientModule,
     AppRoutingModule,
     FormsModule,
-    SocketIoModule.forRoot(config),
+    SocketIoModule,
     NgbModule,
     NgxMaskModule.forRoot(),
     CountUpModule

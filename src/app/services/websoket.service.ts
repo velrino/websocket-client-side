@@ -1,20 +1,23 @@
 import { Injectable } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
+import { SocketService } from './soket.service';
+
 @Injectable({
     providedIn: 'root'
 })
-export class WebSocketService {
-    constructor(private socket: Socket) {
-    }
-    sendChat(message: any) {
-        this.socket.emit('chat', message);
+export class WebSocketService extends SocketService {
+    constructor() {
+        super();
     }
 
-    receiveChat() {
-        return this.socket.fromEvent('chat');
+    sendChat(message: any) {
+        this.auth().emit('start_bet', message);
     }
-    
-    getUsers() {
-        return this.socket.fromEvent('users');
-    }
+
+    // receiveChat() {
+    //     return this.fromEvent('chat');
+    // }
+
+    // getUsers() {
+    //     return this.fromEvent('users');
+    // }
 }
