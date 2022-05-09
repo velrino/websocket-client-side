@@ -16,7 +16,6 @@ export class AuthComponent implements OnInit {
     password = ``;
 
     constructor(
-        private http: HttpClient,
         private modalService: NgbModal,
         private requestService: RequestService,
         private authService: AuthService,
@@ -44,7 +43,8 @@ export class AuthComponent implements OnInit {
             .then((data: any) => {
                 this.authService.setAuthSession(data);
                 this.modalService.dismissAll();
-                this.requestService.toast(`Login feito com sucesso`)
+                // this.requestService.toast(`Login feito com sucesso`)
+                location.reload();
             })
             .catch((response: any) => {
                 if(response[`error`][`error`]) {

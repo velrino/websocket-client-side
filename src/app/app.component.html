@@ -1,5 +1,15 @@
 <app-shared-toast></app-shared-toast>
 <app-auth></app-auth>
+<nav *ngIf="authUser" class="navbar navbar-expand-lg navbar-light bg-light w-100">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav ms-auto">
+      <li class="nav-item me-3">
+        <button type="button" class="btn btn-danger" (click)="logout()">Logout</button>
+      </li>
+    </ul>
+  </div>
+</nav>
+
 <div>
   <div>
     <div>
