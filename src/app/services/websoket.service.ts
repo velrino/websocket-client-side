@@ -9,15 +9,7 @@ export class WebSocketService extends SocketService {
         super();
     }
 
-    sendChat(message: any) {
-        this.auth().emit('start_bet', message);
+    sendChat(data: any) {
+        this.auth().emit('start_bet', data);
     }
-
-    // receiveChat() {
-    //     return this.fromEvent('chat');
-    // }
-
-    // getUsers() {
-    //     return this.fromEvent('users');
-    // }
 }

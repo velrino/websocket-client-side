@@ -1,30 +1,40 @@
 <app-shared-toast></app-shared-toast>
 <app-auth></app-auth>
-<nav *ngIf="authUser" class="navbar navbar-expand-lg navbar-light bg-light">
+<nav *ngIf="hasData()" class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
   <div class="navbar-nav ms-auto">
     <button type="button" class="btn btn-danger me-3" (click)="logout()">Logout</button>
   </div>
 </nav>
 
-<div *ngIf="authUser" class="container mt-5">
-  <div class="row justify-content-md-center">
+<div *ngIf="hasData()" class="container mt-5">
+  <div class="row justify-content-md-center pt-5">
     <div class="col-12 col-lg-6 mb-3">
       <div>
         <div>
-          Atualmente <strong>{{users}}</strong> usuarios online
+          <!-- Atualmente <strong>{{users}}</strong> usuarios online -->
         </div>
       </div>
       <div class="form-group">
         <label for="bet">Numero</label>
-        <input type="text" class="form-control" id="bet" name="bet" mask="separator.2" maxlength="8" inputmode="numeric" [(ngModel)]="message">
+        <input type="text" class="form-control" id="bet" name="bet" mask="separator.2" maxlength="8" inputmode="numeric"
+          [(ngModel)]="message">
       </div>
       <div class="d-grid gap-2 mt-3">
-        <button class="btn btn-danger" type="button" (click)="start()">Começar</button>
+        <button class="btn btn-danger" type="button" (click)="start()" [disabled]="btnDisabled">Começar</button>
       </div>
     </div>
     <div class="col-12 col-lg-6">
-      <div class="text-center">
+      <div class="text-center" *ngIf="result">
+        <h3>Resultado:</h3>
         <h1 [countUp]="result" [reanimateOnClick]="false"></h1>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12" *ngIf="betResult">
+      <!-- betResult.profited -->
+      <div class="alert" [ngClass]="{' alert-success': betResult.profited, ' alert-danger' : !betResult.profited }">
+        {{betResult.profited ? 'Voce ganhou' : 'Voce perdeu'}}
       </div>
     </div>
   </div>

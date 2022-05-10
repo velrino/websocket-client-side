@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { ToastService } from './toast/toast.service';
 import { IToast, ToastType } from './toast/toast.dto';
+import { environment } from '../../environments/environment';
 
 export enum ResquestHTTPEnum {
     GET = 'GET',
@@ -18,7 +19,6 @@ export enum ResquestHTTPEnum {
     providedIn: 'root',
 })
 export class RequestService {
-    API_URL = `http://localhost:3000/api`;
 
     constructor(
         public httpService: HttpClient,
@@ -33,7 +33,7 @@ export class RequestService {
         headers: any = [],
         params: any = null,
     ): Promise<any> {
-        const address = `${this.API_URL}/${path}`;
+        const address = `${environment.API}/api/${path}`;
         return await this.httpService.request(method, address, { body, params, headers, }).toPromise();
     }
 
@@ -49,7 +49,7 @@ export class RequestService {
             'Authorization': `Bearer ${this.authService.getLocalToken()}`,
         }
 
-        const address = `${this.API_URL}/${path}`;
+        const address = `${environment.API}/api/${path}`;
         return await this.httpService.request(method, address, { body, params, headers }).toPromise();
     }
 
@@ -65,7 +65,7 @@ export class RequestService {
             ...headers
         }
 
-        const address = `${this.API_URL}/${path}`;
+        const address = `${environment.API}/api/${path}`;
         return await this.httpService.request(method, address, { body, params, headers }).toPromise();
     }
 
