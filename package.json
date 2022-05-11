@@ -6,7 +6,10 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy": "ng build --prod && npm run upload",
+    "upload": "npx ngh --repo=git@github.com:boostt-websocket/boostt-websocket.github.io.git --name=velrino --email=denismagalhaesvelrino@gmail.com  --branch=master --dir=dist/"
+
   },
   "private": true,
   "dependencies": {
@@ -21,11 +24,13 @@
     "@angular/router": "~13.3.0",
     "@ng-bootstrap/ng-bootstrap": "^12.1.1",
     "@popperjs/core": "^2.10.2",
+    "angular-cli-ghpages": "^1.0.0",
     "bootstrap": "^5.1.3",
     "ngx-countup": "^13.0.0",
     "ngx-mask": "^13.1.12",
     "ngx-socket-io": "^4.2.0",
     "rxjs": "~7.5.0",
+    "socket.io-client": "^4.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },

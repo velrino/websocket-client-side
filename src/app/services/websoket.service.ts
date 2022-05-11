@@ -8,8 +8,4 @@ export class WebSocketService extends SocketService {
     constructor() {
         super();
     }
-
-    sendChat(data: any) {
-        this.auth().emit('start_bet', data);
-    }
 }

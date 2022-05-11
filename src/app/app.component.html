@@ -7,11 +7,12 @@
 </nav>
 
 <div *ngIf="hasData()" class="container mt-5">
+
   <div class="row justify-content-md-center pt-5">
     <div class="col-12 col-lg-6 mb-3">
       <div>
         <div>
-          <!-- Atualmente <strong>{{users}}</strong> usuarios online -->
+          Atualmente <strong>{{users}}</strong> usuarios online
         </div>
       </div>
       <div class="form-group">
@@ -26,7 +27,7 @@
     <div class="col-12 col-lg-6">
       <div class="text-center" *ngIf="result">
         <h3>Resultado:</h3>
-        <h1 [countUp]="result" [reanimateOnClick]="false"></h1>
+        <h1 [countUp]="result" [options]="formatCountUp" [reanimateOnClick]="false"></h1>
       </div>
     </div>
   </div>
