@@ -43,24 +43,22 @@ export class AppComponent implements OnInit {
 
     this.webSocketService.initSocket();
 
-    this.webSocketService.onEvent('current_users').subscribe((data: any) => this.users=data);
+    this.webSocketService.onEvent('error').subscribe((data: any) => { console.log(data); });
 
-    this.webSocketService.onEvent('error')
-      .subscribe((data: any) => {
-        console.log(data);
-    });
+    this.webSocketService.onEvent(`progress_bet_${this.game.id}`)
+      .subscribe((data: any) => { 
+        console.log(`progress_bet = ${data.number}`)
+        this.result = data.number 
+      });
 
-    this.webSocketService.onEvent('end_bet')
+    this.webSocketService.onEvent(`end_bet_${this.game.id}`)
       .subscribe((data: any) => {
-        console.log(data)
-        this.formatCountUp.duration = Number(data.gameBet.number) / 2;
-        this.result = Number(data.gameBet.number);
+        console.log(`end_bet = ${data.number}`)
+        // this.formatCountUp.duration = Number(data.number) / 2;
+        this.result = Number(data.number);
         this.betResult = data;
-        setTimeout(() => {
-          this.betResult = data;
-          this.btnDisabled = false;
-        }, 1000);
-    });
+        this.btnDisabled = false;
+      });
     // this.webSocketService.on("connect", () => {
     //   const engine = socket.io.engine;
     //   console.log(engine.transport.name); // in most cases, prints "polling"
