@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
 import { AuthService } from './services/auth.service';
 import { RequestService } from './services/request.service';
@@ -29,7 +28,6 @@ export class AppComponent implements OnInit {
   public messages: string[] = [];
 
   constructor(
-    private http: HttpClient,
     private authService: AuthService,
     private webSocketService: SocketService,
     private requestService: RequestService
@@ -47,55 +45,38 @@ export class AppComponent implements OnInit {
 
     this.webSocketService.onEvent('error').subscribe((data: any) => { console.log(data); });
 
-    this.webSocketService.onEvent(`progress_bet_${this.game.id}`)
-      .subscribe((data: any) => { 
-        console.log(`progress_bet = ${data.number}`)
-        this.result = data.number;
-        this.btnDisabled = true;
-        this.showResult = true;
-        this.formatCountUp.duration = 3;
-        this.finalResult = false;
-      });
+    this.webSocketService.onEvent(`progress_bet_${this.game.id}`).subscribe((data: any) => this.progressBet(data));
 
-    this.webSocketService.onEvent(`end_bet_${this.game.id}`)
-      .subscribe((data: any) => {
-        console.log(`end_bet = ${data.number}`)
-        const result = Number(data.number);
-        this.showResult = true;
-        if(result <= 1) {
-          this.formatCountUp.duration = 0;
-        } else {
-          this.formatCountUp.duration = 3;
-        }
-        this.result = result;
-        this.betResult = data;
-        this.finalResult = true;
-        this.btnDisabled = false;
-      });
-    // this.webSocketService.on("connect", () => {
-    //   const engine = socket.io.engine;
-    //   console.log(engine.transport.name); // in most cases, prints "polling"
-
-    //   engine.once("upgrade", () => {
-    //     // called when the transport is upgraded (i.e. from HTTP long-polling to WebSocket)
-    //     console.log(engine.transport.name); // in most cases, prints "websocket"
-    //   });
-
-    // });
-
-    // this.webSocketService.auth().connect().on("current_users", (data) => {
-    //   console.log(data)
-    // })
+    this.webSocketService.onEvent(`end_bet_${this.game.id}`).subscribe((data: any) => this.endBet(data));
   }
 
-  start() {
+  startBet() {
     const { game } = this;
-    // this.messages.push(this.message);
     const data = { number: this.message, game: game.id }
     this.webSocketService.emit('start_bet', data, true);
     this.btnDisabled = true;
     this.showResult = false;
     this.finalResult = false;
+  }
+
+  progressBet(data: any) {
+    console.log(`progress_bet = ${data.number}`)
+    this.result = data.number;
+    this.btnDisabled = true;
+    this.showResult = true;
+    this.formatCountUp.duration = 3;
+    this.finalResult = false;
+  }
+
+  endBet(data: any) {
+    console.log(`end_bet = ${data.number}`)
+    const result = Number(data.number);
+    this.showResult = true;
+    this.formatCountUp.duration = (result <= 1) ? 0 : 3;
+    this.result = result;
+    this.betResult = data;
+    this.finalResult = true;
+    this.btnDisabled = false;
   }
 
   logout() {
