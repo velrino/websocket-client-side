@@ -12,6 +12,8 @@ import { SocketService } from './services/soket.service';
 })
 export class AppComponent implements OnInit {
   result = 0;
+  showResult = false;
+  finalResult = false;
   formatCountUp = {
     decimalPlaces: 2,
     duration: 3,
@@ -48,15 +50,26 @@ export class AppComponent implements OnInit {
     this.webSocketService.onEvent(`progress_bet_${this.game.id}`)
       .subscribe((data: any) => { 
         console.log(`progress_bet = ${data.number}`)
-        this.result = data.number 
+        this.result = data.number;
+        this.btnDisabled = true;
+        this.showResult = true;
+        this.formatCountUp.duration = 3;
+        this.finalResult = false;
       });
 
     this.webSocketService.onEvent(`end_bet_${this.game.id}`)
       .subscribe((data: any) => {
         console.log(`end_bet = ${data.number}`)
-        // this.formatCountUp.duration = Number(data.number) / 2;
-        this.result = Number(data.number);
+        const result = Number(data.number);
+        this.showResult = true;
+        if(result <= 1) {
+          this.formatCountUp.duration = 0;
+        } else {
+          this.formatCountUp.duration = 3;
+        }
+        this.result = result;
         this.betResult = data;
+        this.finalResult = true;
         this.btnDisabled = false;
       });
     // this.webSocketService.on("connect", () => {
@@ -81,6 +94,8 @@ export class AppComponent implements OnInit {
     const data = { number: this.message, game: game.id }
     this.webSocketService.emit('start_bet', data, true);
     this.btnDisabled = true;
+    this.showResult = false;
+    this.finalResult = false;
   }
 
   logout() {
