@@ -43,6 +43,14 @@
       <div class="alert" [ngClass]="{' alert-success': userIsProfited, ' alert-danger' : !userIsProfited }">
         {{userIsProfited ? 'Voce ganhou' : 'Voce perdeu'}}
       </div>
+      <div>
+        <h4>Seed</h4>
+        {{betResult.seed}}
+      </div>
+      <div>
+        <h4>Hash</h4>
+        {{betResult.hash}}
+      </div>
     </div>
   </div>
 </div>
