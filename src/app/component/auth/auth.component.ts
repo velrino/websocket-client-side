@@ -4,6 +4,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { AuthService } from '../../services/auth.service';
 import { RequestService, ResquestHTTPEnum } from '../../services/request.service';
+import { EventEmitterEnum, EventEmitterService } from "../../services/event-emitter.service";
 
 @Component({
     selector: 'app-auth',
@@ -20,6 +21,7 @@ export class AuthComponent implements OnInit {
         private requestService: RequestService,
         private authService: AuthService,
     ) {
+        EventEmitterService.get(EventEmitterEnum.Auth).subscribe(() => this.openModal());
     }
 
     ngOnInit() {
@@ -28,10 +30,14 @@ export class AuthComponent implements OnInit {
 
     ngAfterViewInit() {
         const authUser = this.authService.getDataUser();
-        
-        if(authUser) return;
 
-        this.modalService.open(this.authModal, { centered: true, backdrop: `static` })
+        if (authUser) return;
+
+        this.openModal()
+    }
+
+    openModal() {
+        this.modalService.open(this.authModal, { centered: true })
     }
 
     async submit() {
@@ -47,7 +53,7 @@ export class AuthComponent implements OnInit {
                 location.reload();
             })
             .catch((response: any) => {
-                if(response[`error`][`error`]) {
+                if (response[`error`][`error`]) {
                     this.requestService.handleError(response.error.error)
                 }
             })

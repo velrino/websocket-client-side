@@ -4,6 +4,8 @@ import { AuthService } from './services/auth.service';
 import { RequestService } from './services/request.service';
 import { SocketService } from './services/soket.service';
 
+import { EventEmitterEnum, EventEmitterService } from "./services/event-emitter.service";
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -11,6 +13,9 @@ import { SocketService } from './services/soket.service';
 })
 export class AppComponent implements OnInit {
   result = 0;
+  startIn = 5;
+  wasStarted = false;
+  userIsProfited = false;
   showResult = false;
   finalResult = false;
   formatCountUp = {
@@ -37,13 +42,17 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     this.authUser = this.authService.getDataUser();
 
-    if (!this.authUser) return;
-
     await this.getGame()
 
     this.webSocketService.initSocket();
 
     this.webSocketService.onEvent('error').subscribe((data: any) => { console.log(data); });
+
+    this.webSocketService.onEvent(`players_${this.game.id}`).subscribe((data: any) =>{
+      this.users = data.result
+    });
+
+    this.webSocketService.onEvent(`start_bet_in_${this.game.id}`).subscribe((data: any) => this.startIn = data.second);
 
     this.webSocketService.onEvent(`progress_bet_${this.game.id}`).subscribe((data: any) => this.progressBet(data));
 
@@ -61,6 +70,7 @@ export class AppComponent implements OnInit {
 
   progressBet(data: any) {
     console.log(`progress_bet = ${data.number}`)
+    this.wasStarted = true;
     this.result = data.number;
     this.btnDisabled = true;
     this.showResult = true;
@@ -75,8 +85,21 @@ export class AppComponent implements OnInit {
     this.formatCountUp.duration = (result <= 1) ? 0 : 3;
     this.result = result;
     this.betResult = data;
+    this.checkIsProfited()
     this.finalResult = true;
     this.btnDisabled = false;
+    this.wasStarted = false;
+  }
+
+  checkIsProfited() {
+    console.log(this.betResult)
+    if(this.betResult[`profitedList`] && this.authUser) {
+      this.userIsProfited = this.betResult.profitedList.includes(this.authUser.id);
+    }
+  }
+
+  login() {
+    EventEmitterService.get(EventEmitterEnum.Auth).emit(true);
   }
 
   logout() {
@@ -89,6 +112,6 @@ export class AppComponent implements OnInit {
   }
 
   hasData() {
-    return this.authUser && this.game;
+    return this.game;
   }
 }
