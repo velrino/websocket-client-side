@@ -18,7 +18,7 @@
     <div class="col-12 col-lg-6 mb-3">
       <div>
         <div>
-          Atualmente <strong>{{users}}</strong> apostadores
+          Atualmente <strong>{{bets.length}}</strong> apostadores
         </div>
       </div>
       <div class="form-group" *ngIf="this.authUser">
@@ -32,26 +32,78 @@
     </div>
     <div class="col-12 col-lg-6">
       <div class="text-center" *ngIf="showResult">
-        <h3 *ngIf="finalResult">Resultado:</h3>
+        <h3>Resultado da partida atual:</h3>
         <h1 [countUp]="result" [options]="formatCountUp" [reanimateOnClick]="false"></h1>
       </div>
     </div>
   </div>
   <div class="row">
-    <div class="col-12" *ngIf="betResult && authUser">
+    <div class="col-12" *ngIf="iBet">
       <!-- userIsProfited -->
       <div class="alert" [ngClass]="{' alert-success': userIsProfited, ' alert-danger' : !userIsProfited }">
         {{userIsProfited ? 'Voce ganhou' : 'Voce perdeu'}}
       </div>
-      <div>
-        <h4>Seed</h4>
-        {{betResult.seed}}
-      </div>
-      <div>
-        <h4>Hash</h4>
-        {{betResult.hash}}
-      </div>
     </div>
+  </div>
+  <div>
+
+    <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs justify-content-center">
+      <li [ngbNavItem]="1">
+        <a ngbNavLink>Users current bet</a>
+        <ng-template ngbNavContent>
+          <div class="row">
+            <div class="col-12">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">user</th>
+                      <th scope="col">amount</th>
+                      <th scope="col">number</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let bet of bets; index as i">
+                      <th scope="row">{{ i + 1 }}</th>
+                      <td>{{ bet.user.name }}</td>
+                      <td>{{ bet.amount }}</td>
+                      <td>{{ bet.number }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="2">
+        <a ngbNavLink>Last Games</a>
+        <ng-template ngbNavContent>
+          <div class="row">
+            <div class="col-12"  *ngFor="let match of game.matchs; index as i">
+              <h5>{{ match.createdAt | date: 'M/d/yy, h:mm a' }}</h5>
+              <div class="card mb-4">
+                <div class="card-body  text-center">
+                  <div>
+                    <h5 class="card-title">Resultado: <span class="card-text">{{ match.number }}</span></h5>
+                  </div>
+                  <div>
+                    <h5 class="card-title">Seed:</h5>
+                    <p class="card-text">{{ match.seed }}</p>
+                  </div>
+                  <div>
+                    <h5 class="card-title">Hash:</h5>
+                    <p class="card-text">{{ match.hash }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
   </div>
 </div>
 <!-- <div>

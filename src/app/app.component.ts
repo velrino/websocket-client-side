@@ -12,10 +12,12 @@ import { EventEmitterEnum, EventEmitterService } from "./services/event-emitter.
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  activeTab = 1;
   result = 0;
   startIn = 5;
   wasStarted = false;
   userIsProfited = false;
+  iBet = false;
   showResult = false;
   finalResult = false;
   formatCountUp = {
@@ -29,6 +31,7 @@ export class AppComponent implements OnInit {
   betResult: any;
   btnDisabled = false;
   public users: number = 0;
+  public bets: any = [];
   public message: any = 1;
   public messages: string[] = [];
 
@@ -48,8 +51,8 @@ export class AppComponent implements OnInit {
 
     this.webSocketService.onEvent('error').subscribe((data: any) => { console.log(data); });
 
-    this.webSocketService.onEvent(`players_${this.game.id}`).subscribe((data: any) =>{
-      this.users = data.result
+    this.webSocketService.onEvent(`players_${this.game.id}`).subscribe((data: any) => {
+      this.bets = data.result;
     });
 
     this.webSocketService.onEvent(`start_bet_in_${this.game.id}`).subscribe((data: any) => this.startIn = data.second);
@@ -70,6 +73,7 @@ export class AppComponent implements OnInit {
 
   progressBet(data: any) {
     console.log(`progress_bet = ${data.number}`)
+    this.iBet = false;
     this.wasStarted = true;
     this.result = data.number;
     this.btnDisabled = true;
@@ -78,8 +82,9 @@ export class AppComponent implements OnInit {
     this.finalResult = false;
   }
 
-  endBet(data: any) {
+  async endBet(data: any) {
     console.log(`end_bet = ${data.number}`)
+    this.startIn = 5;
     const result = Number(data.number);
     this.showResult = true;
     this.formatCountUp.duration = (result <= 1) ? 0 : 3;
@@ -89,12 +94,19 @@ export class AppComponent implements OnInit {
     this.finalResult = true;
     this.btnDisabled = false;
     this.wasStarted = false;
+    await this.getGame()
   }
 
   checkIsProfited() {
-    console.log(this.betResult)
-    if(this.betResult[`profitedList`] && this.authUser) {
-      this.userIsProfited = this.betResult.profitedList.includes(this.authUser.id);
+    if (this.betResult[`winners`] && this.authUser) {
+      this.iBet = false;
+      const checkIBet = this.bets.filter((item: any) => item.user.id === this.authUser.id)
+      console.log(checkIBet)
+      if(checkIBet.length) {
+        this.iBet = true;
+        this.userIsProfited = this.betResult.winners.includes(this.authUser.id);
+        console.log(this.userIsProfited)
+      }
     }
   }
 
@@ -108,7 +120,8 @@ export class AppComponent implements OnInit {
   }
 
   async getGame() {
-    await this.requestService.requestApi(`game`).then((response) => this.game = (response.data.length) ? response.data[0] : null)
+    const gameId = `41009d8f-54b2-451c-9275-701aa6e0f1cd`;
+    await this.requestService.requestApi(`game/${gameId}/last-matchs`).then((response) => this.game = response)
   }
 
   hasData() {
