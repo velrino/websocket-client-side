@@ -1,5 +1,6 @@
 ::ng-deep {
     .ngb-toasts {
         z-index: 999999999999 !important;
+        position: fixed;
     }
 }

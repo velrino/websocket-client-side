@@ -2,7 +2,10 @@
 <app-auth></app-auth>
 <nav *ngIf="hasData()" class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
   <div class="navbar-nav ms-auto">
-    <button *ngIf="this.authUser" type="button" class="btn btn-danger me-3" (click)="logout()">Logout</button>
+    <div *ngIf="this.authUser">
+      <button type="button" class="btn btn-danger me-3" (click)="deposit()">Deposit</button>
+      <button type="button" class="btn btn-danger me-3" (click)="logout()">Logout</button>
+    </div>
     <button *ngIf="!this.authUser" type="button" class="btn btn-danger me-3" (click)="login()">Login</button>
   </div>
 </nav>
@@ -16,13 +19,21 @@
       </h4>
     </div>
     <div class="col-12 col-lg-6 mb-3">
-      <div>
-        <div>
-          Atualmente <strong>{{bets.length}}</strong> apostadores
-        </div>
+      <div *ngIf="dataWallets">
+        <label for="bet" class="fw-bold">Carteira</label>
+        <select class="form-select" [(ngModel)]="wallet" [compareWith]="compareByID">
+          <option *ngFor="let wallet of dataWallets.fiatWallet" [ngValue]="wallet">
+            {{wallet.total}} ({{wallet.currency.code}})
+          </option>
+      </select>
       </div>
-      <div class="form-group" *ngIf="this.authUser">
-        <label for="bet">Numero</label>
+      <div class="form-group mt-2" *ngIf="this.authUser">
+        <label for="bet" class="fw-bold">Quantia ({{wallet?.currency?.code}})</label>
+        <input type="text" class="form-control" id="amount" name="amount" mask="separator.0" thousandSeparator="." maxlength="8" inputmode="numeric"
+          [(ngModel)]="amount">
+      </div>
+      <div class="form-group mt-2" *ngIf="this.authUser">
+        <label for="bet" class="fw-bold">Número</label>
         <input type="text" class="form-control" id="bet" name="bet" mask="separator.2" maxlength="8" inputmode="numeric"
           [(ngModel)]="message">
       </div>
@@ -52,6 +63,10 @@
         <a ngbNavLink>Users current bet</a>
         <ng-template ngbNavContent>
           <div class="row">
+            <div class="d-flex bd-highlight mb-3">
+              <div class="me-auto p-2 bd-highlight">Atualmente <strong>{{bets.length}}</strong> apostadores</div>
+              <div class="p-2 bd-highlight">Total de apostas: {{(bets?.amount) ? bets?.amount : '0'}}</div>
+            </div>
             <div class="col-12">
               <div class="table-responsive">
                 <table class="table">
@@ -64,11 +79,11 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let bet of bets; index as i">
+                    <tr *ngFor="let bet of bets.users; index as i">
                       <th scope="row">{{ i + 1 }}</th>
-                      <td>{{ bet.user.name }}</td>
-                      <td>{{ bet.amount }}</td>
-                      <td>{{ bet.number }}</td>
+                      <td>{{ bet?.user?.name }}</td>
+                      <td>{{ bet?.transaction?.currencyAmount | currency:bet?.transaction?.currency?.code }}</td>
+                      <td>{{ bet?.number }}</td>
                     </tr>
                   </tbody>
                 </table>

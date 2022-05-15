@@ -28,11 +28,15 @@ export class AppComponent implements OnInit {
   };
   authUser: any;
   game: any = null;
+  currency: any;
+  dataWallets: any;
+  wallet: any;
   betResult: any;
   btnDisabled = false;
   public users: number = 0;
   public bets: any = [];
   public message: any = 1;
+  public amount: any = 1;
   public messages: string[] = [];
 
   constructor(
@@ -40,19 +44,33 @@ export class AppComponent implements OnInit {
     private webSocketService: SocketService,
     private requestService: RequestService
   ) {
+    EventEmitterService.get(EventEmitterEnum.Refresh_Wallet).subscribe(() => this.getWallets());
   }
 
   async ngOnInit() {
     this.authUser = this.authService.getDataUser();
 
     await this.getGame()
+    await this.getWallets()
 
     this.webSocketService.initSocket();
 
-    this.webSocketService.onEvent('error').subscribe((data: any) => { console.log(data); });
+    this.webSocketService.onEvent('error').subscribe((data: any) => { 
+      console.log(data); 
+      this.requestService.handleError(data.error)
+    });
+
+    if(this.authUser) {
+      this.webSocketService.onEvent(`error_user_${this.authUser.id}`).subscribe((data: any) => { 
+        this.requestService.handleError(data.error)
+      });
+    }
+
 
     this.webSocketService.onEvent(`players_${this.game.id}`).subscribe((data: any) => {
-      this.bets = data.result;
+      this.bets = data;
+      console.log(this.bets)
+
     });
 
     this.webSocketService.onEvent(`start_bet_in_${this.game.id}`).subscribe((data: any) => this.startIn = data.second);
@@ -64,11 +82,16 @@ export class AppComponent implements OnInit {
 
   startBet() {
     const { game } = this;
-    const data = { number: this.message, game: game.id }
+    const data = {
+      number: this.message,
+      game: game.id,
+      wallet: this.wallet.id,
+      amount: this.amount,
+    }
     this.webSocketService.emit('start_bet', data, true);
-    this.btnDisabled = true;
-    this.showResult = false;
-    this.finalResult = false;
+    // this.btnDisabled = true;
+    // this.showResult = false;
+    // this.finalResult = false;
   }
 
   progressBet(data: any) {
@@ -100,18 +123,21 @@ export class AppComponent implements OnInit {
   checkIsProfited() {
     if (this.betResult[`winners`] && this.authUser) {
       this.iBet = false;
-      const checkIBet = this.bets.filter((item: any) => item.user.id === this.authUser.id)
-      console.log(checkIBet)
-      if(checkIBet.length) {
+      const checkIBet = this.bets.users.filter((item: any) => item.user.id === this.authUser.id)
+
+      if (checkIBet.length) {
         this.iBet = true;
         this.userIsProfited = this.betResult.winners.includes(this.authUser.id);
-        console.log(this.userIsProfited)
       }
     }
   }
 
   login() {
     EventEmitterService.get(EventEmitterEnum.Auth).emit(true);
+  }
+
+  deposit() {
+    EventEmitterService.get(EventEmitterEnum.Deposit).emit(this.dataWallets);
   }
 
   logout() {
@@ -124,7 +150,18 @@ export class AppComponent implements OnInit {
     await this.requestService.requestApi(`game/${gameId}/last-matchs`).then((response) => this.game = response)
   }
 
+  async getWallets() {
+    await this.requestService.requestApiWithToken(`wallet/my-wallets`).then((response) => {
+      this.wallet = response.favoriteWallet;
+      this.dataWallets = response;
+    })
+  }
+
   hasData() {
     return this.game;
+  }
+
+  compareByID(itemOne: any, itemTwo: any) {
+    return itemOne && itemTwo && itemOne.id == itemTwo.id;
   }
 }

@@ -13,15 +13,25 @@ import { EventEmitterEnum, EventEmitterService } from "../../services/event-emit
 })
 export class AuthComponent implements OnInit {
     @ViewChild('auth') authModal: any;
+    @ViewChild('deposit') depositModal: any;
     email = ``;
     password = ``;
-
+    dataWallets: any;
+    wallet: any;
+    amount = 0;
+    
     constructor(
         private modalService: NgbModal,
         private requestService: RequestService,
         private authService: AuthService,
     ) {
         EventEmitterService.get(EventEmitterEnum.Auth).subscribe(() => this.openModal());
+        EventEmitterService.get(EventEmitterEnum.Deposit).subscribe((data) => {
+            this.wallet = data.favoriteWallet;
+            console.log(this.wallet)
+            this.dataWallets = data;
+            this.openDepositModal()
+        });
     }
 
     ngOnInit() {
@@ -38,6 +48,10 @@ export class AuthComponent implements OnInit {
 
     openModal() {
         this.modalService.open(this.authModal, { centered: true })
+    }
+
+    openDepositModal() {
+        this.modalService.open(this.depositModal, { centered: true })
     }
 
     async submit() {
@@ -59,4 +73,22 @@ export class AuthComponent implements OnInit {
             })
     }
 
+    compareByID(itemOne: any, itemTwo: any) {
+        return itemOne && itemTwo && itemOne.id == itemTwo.id;
+    }
+
+    async makeDeposit() {
+        await this.requestService.requestApiWithToken(
+            `wallet/deposit/${this.wallet.id}/${this.amount}`, 
+            ResquestHTTPEnum.GET)
+            .then((data: any) => {
+                EventEmitterService.get(EventEmitterEnum.Refresh_Wallet).emit(true)
+                this.modalService.dismissAll();
+            })
+            .catch((response: any) => {
+                if (response[`error`][`error`]) {
+                    this.requestService.handleError(response.error.error)
+                }
+            })
+    }
 }

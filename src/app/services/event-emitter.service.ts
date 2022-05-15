@@ -14,5 +14,7 @@ export class EventEmitterService {
 }
 
 export enum EventEmitterEnum {
-    Auth = 'Auth'
+    Auth = 'Auth',
+    Deposit = 'Deposit',
+    Refresh_Wallet = 'Refresh_Wallet'
 }
