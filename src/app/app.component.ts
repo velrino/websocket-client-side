@@ -118,6 +118,7 @@ export class AppComponent implements OnInit {
     this.btnDisabled = false;
     this.wasStarted = false;
     await this.getGame()
+    await this.getWallets()
   }
 
   checkIsProfited() {
