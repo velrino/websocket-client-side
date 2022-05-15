@@ -152,6 +152,8 @@ export class AppComponent implements OnInit {
   }
 
   async getWallets() {
+    if(!this.authUser) return;
+    
     await this.requestService.requestApiWithToken(`wallet/my-wallets`).then((response) => {
       this.wallet = response.favoriteWallet;
       this.dataWallets = response;
