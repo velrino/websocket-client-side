@@ -80,7 +80,7 @@ export class AppComponent implements OnInit {
     this.webSocketService.onEvent(`end_bet_${this.game.id}`).subscribe((data: any) => this.endBet(data));
   }
 
-  startBet() {
+  async startBet() {
     const { game } = this;
     const data = {
       number: this.message,
@@ -89,9 +89,7 @@ export class AppComponent implements OnInit {
       amount: this.amount,
     }
     this.webSocketService.emit('start_bet', data, true);
-    // this.btnDisabled = true;
-    // this.showResult = false;
-    // this.finalResult = false;
+    await this.getWallets()
   }
 
   progressBet(data: any) {
@@ -153,7 +151,7 @@ export class AppComponent implements OnInit {
 
   async getWallets() {
     if(!this.authUser) return;
-    
+
     await this.requestService.requestApiWithToken(`wallet/my-wallets`).then((response) => {
       this.wallet = response.favoriteWallet;
       this.dataWallets = response;
